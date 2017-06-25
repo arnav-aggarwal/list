@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="UTF-8">
+    <title>To-Do</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container">
+        <br>
+
+        <div class="row">
+
+            <!-- Sign-Up Panel-->
+            <div class="col-lg-6 col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">New Task</h3>
+                    </div>
+                    <div class="panel-body">
+
+                        <!-- Sign-up Form -->
+                        <form role="form">
+                            <div class="form-group">
+                                <label for="name-input">Task:</label>
+                                <input class="form-control" id="task-input" type="text">
+                            </div>
+                            <button class="btn btn-default" id="add-task" type="submit">Submit</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tasks Panel -->
+            <div class="col-lg-6 col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Tasks</h3>
+                    </div>
+                    <div class="panel-body" id="tasks">
+                        <h2 id="task-display">Tasks</h2> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/live/3.0/firebase.js"></script>
+    <script>
+        const config = {
+            apiKey: "AIzaSyCBFhdiVw4HaklIQF1fU3W9ngZ5KC4lSoU",
+            authDomain: "to-do-b2afe.firebaseapp.com",
+            databaseURL: "https://to-do-b2afe.firebaseio.com",
+            projectId: "to-do-b2afe",
+            storageBucket: "to-do-b2afe.appspot.com",
+            messagingSenderId: "55149493509"
+        };
+        
+        firebase.initializeApp(config);
+
+        const database = firebase.database();
+        const tasks = [];
+        const defaultItem = 'Add a task above';
+
+        $(document).on('click', 'li', function() {
+
+            const index = $(this).data('index');
+            tasks.splice(index, 1);
+
+            if(tasks.length === 0) {
+                tasks.push(defaultItem);
+            }
+
+            database.ref().set({ tasks });
+        });
+
+        $("#add-task").on("click", function () {
+            event.preventDefault();
+            const task = $("#task-input").val().trim();
+
+            if(!task) {
+                return;
+            }
+
+            if(tasks[0] === defaultItem) {
+                tasks.shift();
+            }
+
+            tasks.push(task);
+            database.ref().set({ tasks });
+            $("#task-input").val('');
+        });
+
+        database.ref().on("value", snapshot => {
+            if(snapshot.val() === null) {
+                database.ref().set({tasks});
+                return;
+            }
+
+            tasks.length = 0;
+            tasks.push(...snapshot.val().tasks);
+            console.log(tasks);
+
+            $('#tasks').html("<ul id='task-list'></ul>");
+            tasks.forEach((task, index) => $("#task-list").append(`<li data-index=${index}>${task}</li>`));
+        },  err => console.log("Errors handled: " + err.code));
+    </script>
+</body>
+</html>
