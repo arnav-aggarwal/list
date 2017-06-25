@@ -15,30 +15,29 @@
             <div class="col-lg-6 col-sm-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">New Task</h3>
+                        <h3 class="panel-title">New Item</h3>
                     </div>
                     <div class="panel-body">
 
                         <!-- Sign-up Form -->
                         <form role="form">
                             <div class="form-group">
-                                <label for="name-input">Task:</label>
-                                <input class="form-control" id="task-input" type="text">
+                                <input class="form-control" id="item-input" type="text">
                             </div>
-                            <button class="btn btn-default" id="add-task" type="submit">Submit</button>
+                            <button class="btn btn-default" id="add-item" type="submit">Submit</button>
                         </form>
                     </div>
                 </div>
             </div>
 
-            <!-- Tasks Panel -->
+            <!-- items Panel -->
             <div class="col-lg-6 col-sm-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">Tasks</h3>
+                        <h3 class="panel-title">Items</h3>
                     </div>
-                    <div class="panel-body" id="tasks">
-                        <h2 id="task-display">Tasks</h2> 
+                    <div class="panel-body" id="items">
+                        <h2 id="item-display">Items</h2> 
                     </div>
                 </div>
             </div>
@@ -59,50 +58,52 @@
         firebase.initializeApp(config);
 
         const database = firebase.database();
-        const tasks = [];
-        const defaultItem = 'Add a task above';
+        const defaultItem = 'Add a item above';
+        const items = [defaultItem];
 
         $(document).on('click', 'li', function() {
 
             const index = $(this).data('index');
-            tasks.splice(index, 1);
+            items.splice(index, 1);
 
-            if(tasks.length === 0) {
-                tasks.push(defaultItem);
+            if(items.length === 0) {
+                items.push(defaultItem);
             }
 
-            database.ref().set({ tasks });
+            database.ref().set({ items });
         });
 
-        $("#add-task").on("click", function () {
+        $("#add-item").on("click", function () {
             event.preventDefault();
-            const task = $("#task-input").val().trim();
+            const item = $("#item-input").val().trim();
 
-            if(!task) {
+            if(!item) {
                 return;
             }
 
-            if(tasks[0] === defaultItem) {
-                tasks.shift();
+            if(items[0] === defaultItem) {
+                items.shift();
             }
 
-            tasks.push(task);
-            database.ref().set({ tasks });
-            $("#task-input").val('');
+            items.push(item);
+            database.ref().set({ items });
+            $("#item-input").val('');
         });
 
         database.ref().on("value", snapshot => {
+            console.log(snapshot.val())
             if(snapshot.val() === null) {
-                database.ref().set({tasks});
+                console.log('asdf')
+                database.ref().set({ items });
                 return;
             }
 
-            tasks.length = 0;
-            tasks.push(...snapshot.val().tasks);
-            console.log(tasks);
+            items.length = 0;
+            items.push(...snapshot.val().items);
+            console.log(items);
 
-            $('#tasks').html("<ul id='task-list'></ul>");
-            tasks.forEach((task, index) => $("#task-list").append(`<li data-index=${index}>${task}</li>`));
+            $('#items').html("<ul id='item-list'></ul>");
+            items.forEach((item, index) => $("#item-list").append(`<li data-index=${index}>${item}</li>`));
         },  err => console.log("Errors handled: " + err.code));
     </script>
 </body>
