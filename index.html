@@ -47,6 +47,8 @@
                         <div id="item-display">
                             <h2>Items</h2> 
                         </div>
+
+                        <!-- Clear Items Button -->
                         <form role="form">
                             <button class="btn btn-default" id="clear" type="submit">Clear crossed items</button>
                         </form>
@@ -64,6 +66,13 @@
         }
         h1 {
             margin-top: 0;
+        }
+        button, input, textarea {
+            outline: none;
+        }
+        #item-input {
+            background-color: #3e444c;
+            color: white;
         }
     </style>
 
@@ -141,7 +150,6 @@
             const nextState = currentState.map((item, index) => crossedItems[index] ? 0 : item).filter(Boolean);
             stateHistory.push(nextState);
             database.ref().set({ items: nextState });
-            // render();
             crossedItems = {};
         });
     </script>
