@@ -53,6 +53,9 @@
     <script src="https://code.jquery.com/jquery.js"></script>
     <script src="https://www.gstatic.com/firebasejs/live/3.0/firebase.js"></script>
     <script>
+        // On page load: Take all the items in the database and render them to the page.
+
+
         const config = {
             apiKey: "AIzaSyCBFhdiVw4HaklIQF1fU3W9ngZ5KC4lSoU",
             authDomain: "to-do-b2afe.firebaseapp.com",
@@ -63,25 +66,17 @@
         };
         
         firebase.initializeApp(config);
-
         const database = firebase.database();
+
         const defaultItem = 'Add an item above';
         let items = [defaultItem];
+        const stateHistory = [];
 
         $(document).on('click', 'li', function() {
-
-            if($(this).data('crossed') === true) {
-
-            }
-
+            const nextState = [...stateHistory[stateHistory.length - 1]];
             const index = $(this).data('index');
-            items.splice(index, 1);
-
-            if(items.length === 0) {
-                items.push(defaultItem);
-            }
-
-            database.ref().set({ items });
+            nextState.splice(index, 1);
+            database.ref().set({ items: nextState });
         });
 
         $("#add-item").on("click", function () {
@@ -92,30 +87,31 @@
                 return;
             }
 
-            if(items[0] === defaultItem) {
-                items.shift();
+            const list = [...stateHistory[stateHistory.length - 1], item];
+            if(list[0] === defaultItem) {
+                list.shift();
             }
 
-            items.push(item);
-            items = items.reduce((arr, item) => arr.map(str => str.toLowerCase()).includes(item.toLowerCase()) ? arr : [...arr, item], []);
+            const items = list.reduce((arr, nextItem) => arr.map(str => str.toLowerCase()).includes(nextItem.toLowerCase()) ? arr : [...arr, nextItem], []);
             database.ref().set({ items });
             $("#item-input").val('');
         });
 
+        function render() {
+            console.log(stateHistory);
+            const lastState = stateHistory[stateHistory.length - 1];
+            $('#items').html("<ul id='item-list' class='list-unstyled'></ul>");
+            lastState.forEach((item, index) => $("#item-list").append(`<li data-index=${index}><h4>${item}</h4></li>`));
+        }
+
         database.ref().on("value", snapshot => {
-            console.log(snapshot.val())
             if(snapshot.val() === null) {
-                console.log('asdf')
-                database.ref().set({ items });
+                database.ref().set({ items: [] });
                 return;
             }
-
-            items.length = 0;
-            items.push(...snapshot.val().items);
-            console.log(items);
-
-            $('#items').html("<ul id='item-list' class='list-unstyled'></ul>");
-            items.forEach((item, index) => $("#item-list").append(`<li data-index=${index}><h4>${item}</h4></li>`));
+            
+            stateHistory.push(snapshot.val().items);
+            render();
         },  err => console.log("Errors handled: " + err.code));
     </script>
 </body>
