@@ -43,11 +43,13 @@
                         <h2 class="panel-title">Items</h2>
                     </div>
                     <div class="panel-body" id="items">
-                        <h2 id="item-display">Items</h2> 
+                        <div id="item-display">
+                            <h2>Items</h2> 
+                        </div>
+                        <form role="form">
+                            <button class="btn btn-default" id="clear" type="submit">Clear crossed items</button>
+                        </form>
                     </div>
-                    <form role="form">
-                        <button class="btn btn-default" id="clear" type="submit">Clear crossed items</button>
-                    </form>
                 </div>
             </div>
         </div>
@@ -112,7 +114,7 @@
         function render() {
             console.log(stateHistory);
             const lastState = stateHistory[stateHistory.length - 1];
-            $('#items').html("<ul id='item-list' class='list-unstyled'></ul>");
+            $('#item-display').html("<ul id='item-list' class='list-unstyled'></ul>");
             lastState.forEach((item, index) => $("#item-list").append(`<li data-index=${index}><h4>${item}</h4></li>`));
         }
 
