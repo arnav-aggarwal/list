@@ -6,13 +6,14 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Shopping List</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://bootswatch.com/slate/bootstrap.min.css">
 </head>
 <body>
     <div class="container">
         <br>
 
-        <div class="jumbotron">
-            <h3 class="display-3">Shopping List</h3>
+        <div class="page-header">
+            <h1>Shopping List</h1>
         </div>
 
         <div class="row">
@@ -57,6 +58,12 @@
     <style>
         .crossed {
             text-decoration: line-through;
+        }
+        .page-header {
+            margin-top: 0;
+        }
+        h1 {
+            margin-top: 0;
         }
     </style>
 
@@ -133,7 +140,8 @@
             const currentState = [...stateHistory[stateHistory.length - 1]];
             const nextState = currentState.map((item, index) => crossedItems[index] ? 0 : item).filter(Boolean);
             stateHistory.push(nextState);
-            render();
+            database.ref().set({ items: nextState });
+            // render();
             crossedItems = {};
         });
     </script>
