@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>To-Do</title>
+    <title>Shopping List</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 </head>
 <body>
@@ -39,8 +39,8 @@
             <!-- Items Panel -->
             <div class="col-lg-12 col-sm-12">
                 <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <h3 class="panel-title">Items</h3>
+                    <div class="panel-heading panel-primary">
+                        <h2 class="panel-title">Items</h2>
                     </div>
                     <div class="panel-body" id="items">
                         <h2 id="item-display">Items</h2> 
@@ -69,6 +69,10 @@
         let items = [defaultItem];
 
         $(document).on('click', 'li', function() {
+
+            if($(this).data('crossed') === true) {
+
+            }
 
             const index = $(this).data('index');
             items.splice(index, 1);
@@ -111,7 +115,7 @@
             console.log(items);
 
             $('#items').html("<ul id='item-list' class='list-unstyled'></ul>");
-            items.forEach((item, index) => $("#item-list").append(`<li data-index=${index}>${item}</li>`));
+            items.forEach((item, index) => $("#item-list").append(`<li data-index=${index}><h4>${item}</h4></li>`));
         },  err => console.log("Errors handled: " + err.code));
     </script>
 </body>
