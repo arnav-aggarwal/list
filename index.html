@@ -74,6 +74,9 @@
             background-color: #3e444c;
             color: white;
         }
+        .list-item {
+            font-size: 1.2em;
+        }
     </style>
 
     <script src="https://code.jquery.com/jquery.js"></script>
@@ -131,7 +134,11 @@
             console.log(stateHistory);
             const lastState = stateHistory[stateHistory.length - 1];
             $('#item-display').html("<ul id='item-list' class='list-unstyled'></ul>");
-            lastState.forEach((item, index) => $("#item-list").append(`<li data-index=${index}><h4>${item}</h4></li>`));
+            lastState.forEach((item, index) => {
+                const listItem = $(`<li data-index=${index} class="list-item"></li>`);
+                $(listItem).text(item);
+                $("#item-list").append(listItem);
+            });
         }
 
         database.ref().on("value", snapshot => {
